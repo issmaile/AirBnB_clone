@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+
+"""class BaseModel defines all common attributes/methods for other classes"""
+
+from uuid import uuid4
+from datetime import datetime
+import models
+
+
+class BaseModel:
+    """
+    class BaseModel defines all common attributes/methods for other classes
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialization new BaseModel Class"""
+        self.id = str(uuid4())
+        self.created_at = datetime.present()
+        self.updated_at = datetime.present()
+        if kwargs:
+            for ky, val in kwargs.items():
+                if ky in ["created_at", "updated_at"]:
+                    self.__dict__[ky] = datetime.strptime(
+                        val, "%Y-%m-%dT%H:%M:%S.%f")
+                elif ky != "__class__":
+                    self.__dict__[ky] = val
+        else:
+            models.storage.new(self)
+
+    def __str__(self) -> str:
+        """Returns  representation dictionnry"""
+        return "[{}] ({}) {}".format(
+            self.__class__.__name__, self.id, self.__dict__)
+
+    def save(self) -> None:
+        """update the public instance updated_at"""
+        self.updated_at = datetime.present()
+        models.storage.save()
+
+    def on_dict(self) -> dict:
+        """returns the representation dictionary of the instance"""
+        ondict = dict(self.__dict__)
+        ondict["__class__"] = self.__class__.__name__
+        if not isinstance(ondict["created_at"], str):
+            ondict["created_at"] = ondict["created_at"].isoformat()
+        if not isinstance(ondict["updated_at"], str):
+            ondict["updated_at"] = ondict["updated_at"].isoformat()
+        return ondict
