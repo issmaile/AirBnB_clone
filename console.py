@@ -64,12 +64,12 @@ class HBNBCommand(cmd.Cmd):
             "destroy": self.do_destroy,
             "count": self.do_count
         }
-        matchh = re.search(r"\.", arg)
-        if matchh is not None:
-            argl = [arg[:match.span()[0]], arg[matchh.span()[1]:]]
-            matchh = re.search(r"\((.*?)\)", argl[1])
-            if matchh is not None:
-                command = [argl[1][:match.span()[0]], matchh.group()[1:-1]]
+        match = re.search(r"\.", arg)
+        if match is not None:
+            argl = [arg[:match.span()[0]], arg[match.span()[1]:]]
+            match = re.search(r"\((.*?)\)", argl[1])
+            if match is not None:
+                command = [argl[1][:match.span()[0]], match.group()[1:-1]]
                 if command[0] in arg_dict.keys():
                     call = "{} {}".format(argl[0], command[1])
                     return arg_dict[command[0]](call)
@@ -143,7 +143,7 @@ class HBNBCommand(cmd.Cmd):
             objlis = []
             for o in storage.all().values():
                 if len(arglis) > 0 and arglis[0] == o.__class__.__name__:
-                    objlis.append(obj.__str__())
+                    objlis.append(o.__str__())
                 elif len(arglis) == 0:
                     objlis.append(o.__str__())
             print(objlis)
